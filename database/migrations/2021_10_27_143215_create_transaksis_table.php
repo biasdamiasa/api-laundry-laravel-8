@@ -18,7 +18,7 @@ class CreateTransaksisTable extends Migration
             $table->unsignedBigInteger('id_member');
             $table->date('tgl_order');
             $table->date('batas_waktu');
-            $table->date('tgl_bayar');
+            $table->date('tgl_bayar')->nullable();
             $table->enum('status', ['baru', 'proses', 'selesai', 'diambil']);
             $table->enum('dibayar', ['dibayar', 'belum dibayar']);
             $table->unsignedBigInteger('id_user');

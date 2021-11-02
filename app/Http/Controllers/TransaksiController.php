@@ -59,4 +59,47 @@ class TransaksiController extends Controller
         return $this->response->successData($data);
     }
 
+
+    public function changeStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'status' => 'required'
+        ]);
+
+        if($validator->fails()) {
+            return $this->response->errorResponse($validator->fails());
+        }
+        
+        $transaksi = Transaksi::where('id', '=', $request->id)->first();
+        $transaksi->status = $request->status;
+        
+        $transaksi->save();
+        
+        return $this->response->successResponse('Status berhasil diubah');
+    }
+    
+    public function bayar(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'tgl_bayar' => 'required'
+        ]);
+    
+        if($validator->fails()) {
+            return $this->response->errorResponse($validator->fails());
+        }
+
+        $transaksi = Transaksi::where('id', '=', $request->id)->first();
+        $transaksi->tgl_bayar = $request->tgl_bayar;
+        $transaksi->status = "diambil";
+        $transaksi->dibayar = "dibayar";
+        
+
+        $transaksi->save();
+
+        return $this->response->successResponse('Pembayaran berhasil');
+        
+    }
+
 }

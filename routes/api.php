@@ -50,8 +50,10 @@ Route::group(['middleware' => ['jwt.verify:admin,kasir']], function() {
 
     //TRANSAKSI
     Route::post('transaksi', [TransaksiController::class, 'store']);
-    Route::get('transaksi', [TransaksiController::class, 'getAll']);
     Route::get('transaksi/{id}', [TransaksiController::class, 'getById']);
+    Route::get('transaksi', [TransaksiController::class, 'getAll']);
+    Route::post('transaksi/status', [TransaksiController::class, 'changeStatus']);
+    Route::post('transaksi/bayar', [TransaksiController::class, 'bayar']);
 });
 
 

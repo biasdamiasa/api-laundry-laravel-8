@@ -15,7 +15,7 @@ class CreatePaketsTable extends Migration
     {
         Schema::create('paket', function (Blueprint $table) {
             $table->id();
-            $table->enum('jenis',['kiloan', 'selimut', 'bed cover']);
+            $table->enum('jenis',['Cuci setrika', 'Cuci kering', 'Sprei kecil', 'Sprei besar', 'Bed cover']);
             $table->integer('harga');
             $table->timestamps();
         });
