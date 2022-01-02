@@ -12,7 +12,6 @@ use App\Http\Controllers\DetilTransaksiController;
 
 
 Route::post('login', [UserController::class, 'login']);
-Route::post('user/tambah', [UserController::class, 'register']);
 
 Route::group(['middleware' => ['jwt.verify:admin,kasir,owner']], function() {
     Route::post('login/check', [UserController::class, 'loginCheck']);
@@ -20,7 +19,6 @@ Route::group(['middleware' => ['jwt.verify:admin,kasir,owner']], function() {
     Route::get('getuser', [UserController::class, 'getUser']);
 });
 
-Route::get('detil', [DetilTransaksiController::class, 'index']);
 
 //Route khusus admin
 Route::group(['middleware' => ['jwt.verify:admin']], function() {
@@ -39,6 +37,8 @@ Route::group(['middleware' => ['jwt.verify:admin']], function() {
     Route::put('paket/{id}', [PaketController::class, 'update']);
     Route::delete('paket/{id}', [PaketController::class, 'delete']);
     
+    //USER
+    Route::post('user/tambah', [UserController::class, 'register']);    
 });
 
 
@@ -50,7 +50,7 @@ Route::group(['middleware' => ['jwt.verify:admin,kasir']], function() {
     Route::get('member/{id}', [MemberController::class, 'getById']);
     Route::put('member/{id}', [MemberController::class, 'update']);
     Route::delete('member/{id}', [MemberController::class, 'delete']);
-
+    
     //TRANSAKSI
     Route::post('transaksi', [TransaksiController::class, 'store']);
     Route::get('transaksi/{id}', [TransaksiController::class, 'getById']);
