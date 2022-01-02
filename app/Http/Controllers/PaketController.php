@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Helpers\ResponseHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Paket;
@@ -9,10 +8,8 @@ use JWTAuth;
 
 class PaketController extends Controller
 {
-    public $response;
     public $user;
     public function __construct(){
-        $this->response = new ResponseHelper();
         $this->user = JWTAuth::parseToken()->authenticate();
     }
 
@@ -24,7 +21,7 @@ class PaketController extends Controller
         ]);
 
         if($validator->fails()){
-            return $this->response->errorResponse($validator->errors());
+            return response()->json($validator->errors());
 		}
 
         $paket = new Paket();
@@ -33,27 +30,29 @@ class PaketController extends Controller
         $paket->save();
 
         $data = Paket::where('id', '=', $paket->id)->first();
-        return $this->response->successResponseData('Data paket berhasil ditambahkan', $data);
+        return response()->json([
+            'message' => 'Data paket berhasil ditambahkan',
+            'data' => $data
+        ]);
     }
 
-    public function getAll($limit = NULL, $offset = NULL)
+    public function getAll()
     {
-        $data['count'] = Paket::count();
-
-        // if($limit == NULL && $offset == NULL) {
-            $data['paket'] = Paket::get();
-        // } else {
-        //     $data['paket'] = Paket::take($limit)->skip($offset)->get();            
-        // }
-
-        return $this->response->successData($data);
+        $data = Paket::get();
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
     }
 
     public function getById($id)
     {
-        $data['paket'] = Paket::where('id', '=', $id)->get();
+        $data = Paket::where('id', '=', $id)->first();
         
-        return $this->response->successData($data);
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -64,16 +63,19 @@ class PaketController extends Controller
         ]);
 
         if($validator->fails()) {
-            return $this->response->errorResponse($validator->errors());
+            return response()->json($validator->errors());
         }
 
         $paket = Paket::where('id', '=', $id)->first();
         $paket->jenis = $request->jenis;
         $paket->harga = $request->harga;
 
-        $outlet->save();
+        $paket->save();
 
-        return $this->response->successResponse('Data paket berhasil diubah');
+        return response()->json([
+            'success' => true,
+            'message' => 'Data paket berhasil diubah'
+        ]);
     }
 
     public function delete($id)
@@ -81,9 +83,15 @@ class PaketController extends Controller
         $delete = Paket::where('id', '=', $id)->delete();
 
         if($delete) {
-            return $this->response->successResponse('Data paket berhasil dihapus');
+            return response()->json([
+                'success' => true,
+                'message' => "Data outlet berhasil dihapus"
+            ]);
         } else {
-            return $this->response->errorResponse('Data paket gagal dihapus');
+            return response()->json([
+                'success' => false,
+                'message' => "Data outlet gagal dihapus"
+            ]);
         }
     }
 }

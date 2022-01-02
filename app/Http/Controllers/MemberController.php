@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Helpers\ResponseHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Member;
@@ -13,7 +12,7 @@ class MemberController extends Controller
     
     public function __construct()
     {
-        //$this->user = JWTAuth::parseToken()->authenticate();   
+        $this->user = JWTAuth::parseToken()->authenticate();   
     }
 
     public function store(Request $request)
@@ -47,18 +46,14 @@ class MemberController extends Controller
     
     public function getAll()
     {
-        $data['count'] = Member::count();
-        
-        $data['member'] = Member::get();
-        
-        return response()->json(['data' => $data]);
+        $data = Member::get();        
+        return response()->json($data);
     }
     
     public function getById($id)
     {
-        $data['member'] = Member::where('id', '=', $id)->get();
-        
-        return response()->json(['data' => $data]);
+        $data = Member::where('id', '=', $id)->first();        
+        return response()->json($data);
     }
     
     public function update(Request $request, $id)
@@ -90,10 +85,15 @@ class MemberController extends Controller
         $delete = Member::where('id', '=', $id)->delete();
 
         if($delete) {
-            return response()->json(['message' => 'Data member berhasil dihapus']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Data member berhasil dihapus'
+            ]);
         } else {
-            return response()->json(['message' => 'Data member gagal dihapus']);
-            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data member gagal dihapus'
+            ]);            
         }
     }
 }

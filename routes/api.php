@@ -8,6 +8,7 @@ use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\DetilTransaksiController;
 
 
 Route::post('login', [UserController::class, 'login']);
@@ -16,8 +17,10 @@ Route::post('user/tambah', [UserController::class, 'register']);
 Route::group(['middleware' => ['jwt.verify:admin,kasir,owner']], function() {
     Route::post('login/check', [UserController::class, 'loginCheck']);
     Route::post('logout', [UserController::class, 'logout']);
-    
+    Route::get('getuser', [UserController::class, 'getUser']);
 });
+
+Route::get('detil', [DetilTransaksiController::class, 'index']);
 
 //Route khusus admin
 Route::group(['middleware' => ['jwt.verify:admin']], function() {
@@ -52,8 +55,11 @@ Route::group(['middleware' => ['jwt.verify:admin,kasir']], function() {
     Route::post('transaksi', [TransaksiController::class, 'store']);
     Route::get('transaksi/{id}', [TransaksiController::class, 'getById']);
     Route::get('transaksi', [TransaksiController::class, 'getAll']);
-    Route::post('transaksi/status', [TransaksiController::class, 'changeStatus']);
-    Route::post('transaksi/bayar', [TransaksiController::class, 'bayar']);
+    Route::post('transaksi/detil', [DetilTransaksiController::class, 'store']);
+    Route::get('transaksi/detil/{id}', [DetilTransaksiController::class, 'getById']);
+    Route::post('transaksi/status/{id}', [TransaksiController::class, 'changeStatus']);
+    Route::post('transaksi/bayar/{id}', [TransaksiController::class, 'bayar']);
+    Route::get('transaksi/total/{id}', [DetilTransaksiController::class, 'getTotal']);
 });
 
 

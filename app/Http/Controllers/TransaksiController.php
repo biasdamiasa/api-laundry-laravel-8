@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Helpers\ResponseHelper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Transaksi;
 use Carbon\Carbon;
@@ -10,23 +10,21 @@ use JWTAuth;
 
 class TransaksiController extends Controller
 {
-    public $response;
     public $user;
 
     public function __construct()
     {
-        $this->response = new ResponseHelper();
         $this->user = JWTAuth::parseToken()->authenticate();
     }
 
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id_member' => 'required'
+            'id_member' => 'required',
         ]);
 
         if($validator->fails()) {
-            return $this->response->errorResponse($validator->errors());
+            return response()->json($validator->errors());
         }
 
         $transaksi = new Transaksi();
@@ -41,65 +39,58 @@ class TransaksiController extends Controller
 
         $data = Transaksi::where('id', '=', $transaksi->id)->first();
 
-        return $this->response->successResponseData('Data transaksi berhasil ditambahkan', $data);
+        return response()->json(['message' => 'Data transaksi berhasil ditambahkan', 'data' => $data]);
     }
 
     public function getAll()
     {
-        $data['count'] = Transaksi::count();
-        $data['transaksi'] = Transaksi::get();
-
-        return $this->response->successData($data);
+        $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')
+                    ->select('transaksi.*', 'member.nama')
+                    ->get();
+                    
+        return response()->json(['success' => true, 'data' => $data]);
     }
-
+    
     public function getById($id)
     {
-        $data['transaksi'] = Transaksi::where('id', '=', $id)->get();
-
-        return $this->response->successData($data);
+        $data = Transaksi::where('id', '=', $id)->first();  
+        $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')      
+                                      ->select('transaksi.*', 'member.nama')
+                                      ->where('transaksi.id', '=', $id)
+                                      ->first();
+        return response()->json($data);
     }
-
-
-    public function changeStatus(Request $request)
+    
+    
+    public function changeStatus(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required',
             'status' => 'required'
         ]);
-
+        
         if($validator->fails()) {
-            return $this->response->errorResponse($validator->fails());
+            return response()->json($validator->errors());
         }
         
-        $transaksi = Transaksi::where('id', '=', $request->id)->first();
+        $transaksi = Transaksi::where('id', '=', $id)->first();
         $transaksi->status = $request->status;
         
         $transaksi->save();
         
-        return $this->response->successResponse('Status berhasil diubah');
+        return response()->json(['message' => 'Status berhasil diubah']);
     }
     
-    public function bayar(Request $request)
+    public function bayar($id)
     {
-        $validator = Validator::make($request->all(), [
-            'id' => 'required',
-            'tgl_bayar' => 'required'
-        ]);
-    
-        if($validator->fails()) {
-            return $this->response->errorResponse($validator->fails());
-        }
-
-        $transaksi = Transaksi::where('id', '=', $request->id)->first();
-        $transaksi->tgl_bayar = $request->tgl_bayar;
-        $transaksi->status = "diambil";
+        $transaksi = Transaksi::where('id', '=', $id)->first();
+        $transaksi->tgl_bayar = Carbon::now();
+        $transaksi->status = "Diambil";
         $transaksi->dibayar = "dibayar";
         
-
-        $transaksi->save();
-
-        return $this->response->successResponse('Pembayaran berhasil');
         
+        $transaksi->save();
+        
+        return response()->json(['message' => 'Pembayaran berhasil']);
     }
 
 }

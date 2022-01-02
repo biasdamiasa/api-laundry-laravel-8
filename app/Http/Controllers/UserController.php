@@ -29,11 +29,20 @@ class UserController extends Controller
             return $this->response->errorResponse('Generate Token Failed');
 		}
 
-        $data = [
-			'token' => $token,
-			'user'  => JWTAuth::user()
-		];
-        return $this->response->successResponseData('Authentication success', $data);
+		$user = JWTAuth::user();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Login berhasil',
+            'token' => $token,
+			'user' => $user
+        ]);
+	}
+
+	public function getUser()
+	{
+		$user = JWTAuth::user();
+		return response()->json($user);
 	}
 
     public function register(Request $request)

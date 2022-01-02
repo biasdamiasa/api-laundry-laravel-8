@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Paket extends Model
 {
     protected $table = 'paket';
-
     protected $fillable = ['jenis', 'harga'];
+
 }
