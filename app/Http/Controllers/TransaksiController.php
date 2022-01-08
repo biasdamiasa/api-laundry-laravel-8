@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Transaksi;
+use App\Models\DetilTransaksi;
 use Carbon\Carbon;
 use JWTAuth;
 
@@ -60,8 +61,7 @@ class TransaksiController extends Controller
                                       ->first();
         return response()->json($data);
     }
-    
-    
+
     public function changeStatus(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -83,14 +83,26 @@ class TransaksiController extends Controller
     public function bayar($id)
     {
         $transaksi = Transaksi::where('id', '=', $id)->first();
+        $total = DetilTransaksi::where('id_transaksi', $id)->sum('subtotal');
+
         $transaksi->tgl_bayar = Carbon::now();
         $transaksi->status = "Diambil";
         $transaksi->dibayar = "dibayar";
-        
+        $transaksi->total_bayar = $total;        
         
         $transaksi->save();
         
         return response()->json(['message' => 'Pembayaran berhasil']);
+    }
+
+    public function report()
+    {
+        $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')
+                    ->select('transaksi.*', 'member.nama')
+                    ->where('transaksi.dibayar', '=' , 'dibayar')
+                    ->get();
+
+        return response()->json($data);
     }
 
 }

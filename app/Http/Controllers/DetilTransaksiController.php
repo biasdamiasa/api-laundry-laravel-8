@@ -48,8 +48,6 @@ class DetilTransaksiController extends Controller
         $data = DetilTransaksi::where('id', '=', $detil->id)->first();
 
         return response()->json(['message' => 'Berhasil tambah detil transaksi', 'data' => $data]);
-
-        // return $this->response->successResponseData('Berhasil tambah detil transaksi', $data);
     }
 
     public function getById($id)

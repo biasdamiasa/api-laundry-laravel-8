@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PaketController;
@@ -17,6 +18,7 @@ Route::group(['middleware' => ['jwt.verify:admin,kasir,owner']], function() {
     Route::post('login/check', [UserController::class, 'loginCheck']);
     Route::post('logout', [UserController::class, 'logout']);
     Route::get('getuser', [UserController::class, 'getUser']);
+    Route::get('dashboard', [DashboardController::class, 'index']);
 });
 
 
@@ -56,10 +58,15 @@ Route::group(['middleware' => ['jwt.verify:admin,kasir']], function() {
     Route::get('transaksi/{id}', [TransaksiController::class, 'getById']);
     Route::get('transaksi', [TransaksiController::class, 'getAll']);
     Route::post('transaksi/detil', [DetilTransaksiController::class, 'store']);
+    // Route::get('getDetail/{id}', [TransaksiController::class, 'getDetail']);
     Route::get('transaksi/detil/{id}', [DetilTransaksiController::class, 'getById']);
     Route::post('transaksi/status/{id}', [TransaksiController::class, 'changeStatus']);
     Route::post('transaksi/bayar/{id}', [TransaksiController::class, 'bayar']);
-    Route::get('transaksi/total/{id}', [DetilTransaksiController::class, 'getTotal']);
+    Route::get('transaksi/total/{id}', [DetilTransaksiController::class, 'getTotal']);    
+});
+
+Route::group(['middleware' => ['jwt.verify:owner']], function() {
+    Route::get('report', [TransaksiController::class, 'report']);
 });
 
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Helpers\ResponseHelper;
 use Closure;
 use JWTAuth;
 use Exception;
@@ -11,10 +10,6 @@ use Illuminate\Http\Request;
 
 class JWTMiddleware
 {
-    public $response;
-    public function __construct(){
-        $this->response = new ResponseHelper();
-    }
     public function handle(Request $request, Closure $next, ...$roles)
     {
         try {
@@ -22,12 +17,12 @@ class JWTMiddleware
 
         } catch(Exception $e){
             if($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
-                return $this->response->errorResponse('Token Invalid');
+                return response()->json(['message' => 'Token is invalid']);
             }
             else if($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
-                return $this->response->errorResponse('Token Expired');
+                return response()->json(['message' => 'Token is expired']);
             } else {
-                return $this->response->errorResponse('Authorization token not found');
+                return response()->json(['message' => 'Authorization token not found']);
             }
         }
 
@@ -36,6 +31,6 @@ class JWTMiddleware
             return $next($request);
         }
 
-        return $this->response->errorResponse('You are not authorized to access this route');
+        return response()->json(['message' => 'You are not authorized to access this route']);
     }
 }
