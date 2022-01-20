@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\DetilTransaksi;
 use App\Models\Paket;
-use App\Helpers\ResponseHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -13,10 +12,8 @@ use JWTAuth;
 class DetilTransaksiController extends Controller
 {
     public $user;
-    public $response;
     public function __construct()
     {
-        $this->response = new ResponseHelper();
         $this->user = JWTAuth::parseToken()->authenticate();
     }
 

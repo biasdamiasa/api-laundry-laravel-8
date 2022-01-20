@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\ResponseHelper;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -12,21 +11,16 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 
 class UserController extends Controller
 {
-    public $response;
-    public function __construct(){
-        $this->response = new ResponseHelper();
-    }
-    
     public function login(Request $request)
     {
 		$credentials = $request->only('username', 'password');
 
 		try {
 			if(!$token = JWTAuth::attempt($credentials)){
-                return $this->response->errorResponse('Invalid username and password');
+                return response()->json(['message' => 'Invalid username and password']);
 			}
 		} catch(JWTException $e){
-            return $this->response->errorResponse('Generate Token Failed');
+			return response()->json(['message' => 'Generate Token Failed']);
 		}
 
 		$user = JWTAuth::user();
