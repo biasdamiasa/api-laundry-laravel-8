@@ -29,7 +29,7 @@ class DetilTransaksiController extends Controller
         ]);
 
         if($validator->fails()) {
-            return $this->response->errorResponse($validator->fails());
+            return response()->json($validator->errors());
         }
         
         $detil = new DetilTransaksi();

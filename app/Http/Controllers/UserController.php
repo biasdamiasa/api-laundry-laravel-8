@@ -56,7 +56,7 @@ class UserController extends Controller
 		]);
 
 		if($validator->fails()){
-            return $this->response->errorResponse($validator->errors());
+            return response()->json($validator->errors());
 		}
 
 		$user = new User();
@@ -71,31 +71,34 @@ class UserController extends Controller
 		$token = JWTAuth::fromUser($user);
 
         $data = User::where('username','=', $request->username)->first();
-        return $this->response->successResponseData('Data user berhasil ditambahkan', $data);
+        return response()->json([
+			'message' => 'Berhasil menambah user',
+			'data' => $data
+		]);
 	}
 
 	public function loginCheck(){
 		try {
 			if(!$user = JWTAuth::parseToken()->authenticate()){
-				return $this->response->errorResponse('Invalid token!');
+				return response()->json(['message' => 'Invalid Token']);
 			}
 		} catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e){
-			return $this->response->errorResponse('Token expired!');
+			return response()->json(['message' => 'Token expired!']);
 		} catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e){
-			return $this->response->errorResponse('Invalid token!');
+			return response()->json(['message' => 'Invalid Token!']);
 		} catch (Tymon\JWTAuth\Exceptions\JWTException $e){
-			return $this->response->errorResponse('Token absent!');
+			return response()->json(['message' => 'Token Absent']);
 		}
 
-		return $this->response->successResponseData('Authentication success!', $user);
+		return response()->json(['message' => 'Success']);
 	}
-
+	
     public function logout(Request $request)
     {
-        if(JWTAuth::invalidate(JWTAuth::getToken())) {
-            return $this->response->successResponse('You are logged out');
+		if(JWTAuth::invalidate(JWTAuth::getToken())) {
+			return response()->json(['message' => 'You are logged out']);
         } else {
-            return $this->response->errorResponse('Logged out failed');
+            return response()->json(['message' => 'Failed']);
         }
     }
 }
