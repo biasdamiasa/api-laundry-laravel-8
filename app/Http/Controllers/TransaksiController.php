@@ -113,11 +113,24 @@ class TransaksiController extends Controller
         return response()->json(['message' => 'Pembayaran berhasil']);
     }
 
-    public function report()
+    public function report(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'tahun' => 'required',
+            'bulan' => 'required'
+        ]);
+        
+        if($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
+        $tahun = $request->tahun;
+        $bulan = $request->bulan;
+        
         $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')
-                    ->select('transaksi.*', 'member.nama')
-                    ->where('transaksi.dibayar', '=' , 'dibayar')
+                    ->select('transaksi.id','transaksi.tgl_order','transaksi.tgl_bayar','transaksi.total_bayar', 'member.nama')
+                    ->whereYear('tgl_order', '=' , $tahun)
+                    ->whereMonth('tgl_order', '=', $bulan)
                     ->get();
 
         return response()->json($data);

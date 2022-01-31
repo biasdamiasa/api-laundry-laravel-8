@@ -68,7 +68,7 @@ Route::group(['middleware' => ['jwt.verify:admin,kasir']], function() {
 });
 
 Route::group(['middleware' => ['jwt.verify:owner']], function() {
-    Route::get('report', [TransaksiController::class, 'report']);
+    Route::post('report', [TransaksiController::class, 'report']);
 });
 
 
