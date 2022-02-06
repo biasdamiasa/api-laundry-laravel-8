@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use DB;
 
 class UserController extends Controller
 {
@@ -39,7 +40,7 @@ class UserController extends Controller
 		return response()->json($user);
 	}
 
-    public function register(Request $request)
+    public function store(Request $request)
 	{
 		$validator = Validator::make($request->all(), [
 			'name' => 'required',
@@ -69,6 +70,66 @@ class UserController extends Controller
 			'message' => 'Berhasil menambah user',
 			'data' => $data
 		]);
+	}
+
+	public function getAll()
+	{
+		$data = DB::table('users')->join('outlet', 'users.id_outlet', '=', 'outlet.id')
+								  ->select('users.*', 'outlet.nama')
+								  ->get();
+		
+		return response()->json($data);
+	}
+
+	public function getById($id)
+	{
+		$user = User::where('id', '=', $id)->first();
+
+		return response()->json($user);
+	}
+
+	public function update(Request $request, $id)
+	{
+		$validator = Validator::make($request->all(), [
+			'role' => 'required',
+			'name' => 'required',
+			'id_outlet' => 'required'
+		]);
+		
+		$user = User::where('id', '=', $id)->first();
+		
+		$user->name = $request->name;
+		$user->username = $request->username;
+		$user->role = $request->role;
+		$user->id_outlet = $request->id_outlet;
+		if($request->password != null) {
+			$user->password = Hash::make($request->password);
+		}
+
+		$user->save();
+
+		return response()->json([
+			'success' => true,
+			'message' => 'Data user berhasil diubah'
+		]);
+
+	}
+
+	public function delete($id)
+	{
+		$user = User::where('id', '=', $id)->delete();
+
+		if($user) {
+			return response()->json([
+				'success' => true,
+				'message' => 'Data user berhasil dihapus'
+			]);
+		} else {
+			return response()->json([
+				'success' => false,
+				'message' => 'Data user gagal dihapus'
+			]);
+		}
 	}
 
 	public function loginCheck(){

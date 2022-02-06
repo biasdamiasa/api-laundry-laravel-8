@@ -40,7 +40,12 @@ Route::group(['middleware' => ['jwt.verify:admin']], function() {
     Route::delete('paket/{id}', [PaketController::class, 'delete']);
     
     //USER
-    Route::post('user/tambah', [UserController::class, 'register']);    
+    Route::post('user', [UserController::class, 'store']);
+    Route::get('user', [UserController::class, 'getAll']);
+    Route::get('user/{id}', [UserController::class, 'getById']);
+    Route::put('user/{id}', [UserController::class, 'update']);
+    Route::delete('user/{id}', [UserController::class, 'delete']);
+
 });
 
 

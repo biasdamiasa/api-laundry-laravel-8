@@ -63,6 +63,7 @@ class TransaksiController extends Controller
         }
 
         $transaksi = Transaksi::where('id', '=', $id)->first();
+        
         $transaksi->id_member = $request->id_member;
 
         $transaksi->save();
