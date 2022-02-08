@@ -15,7 +15,7 @@ use App\Http\Controllers\DetilTransaksiController;
 Route::post('login', [UserController::class, 'login']);
 
 Route::group(['middleware' => ['jwt.verify:admin,kasir,owner']], function() {
-    Route::post('login/check', [UserController::class, 'loginCheck']);
+    Route::get('login/check', [UserController::class, 'loginCheck']);
     Route::post('logout', [UserController::class, 'logout']);
     Route::get('getuser', [UserController::class, 'getUser']);
     Route::get('dashboard', [DashboardController::class, 'index']);

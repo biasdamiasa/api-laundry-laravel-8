@@ -135,17 +135,32 @@ class UserController extends Controller
 	public function loginCheck(){
 		try {
 			if(!$user = JWTAuth::parseToken()->authenticate()){
-				return response()->json(['message' => 'Invalid Token']);
+				return response()->json([
+					'success' => false,
+					'message' => 'Invalid Token'
+				]);
 			}
 		} catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e){
-			return response()->json(['message' => 'Token expired!']);
+			return response()->json([
+				'success' => false,
+				'message' => 'Token expired!'
+			]);
 		} catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e){
-			return response()->json(['message' => 'Invalid Token!']);
+			return response()->json([
+				'success' => false,
+				'message' => 'Invalid Token!'
+			]);
 		} catch (Tymon\JWTAuth\Exceptions\JWTException $e){
-			return response()->json(['message' => 'Token Absent']);
+			return response()->json([
+				'success' => false,
+				'message' => 'Token Absent'
+			]);
 		}
 
-		return response()->json(['message' => 'Success']);
+		return response()->json([
+			'success' => true,
+			'message' => 'Success'
+		]);
 	}
 	
     public function logout(Request $request)
