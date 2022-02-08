@@ -39,6 +39,7 @@ class MemberController extends Controller
         $data = Member::where('id', '=', $member->id)->first();
 
         return response()->json([
+            'success' => true,
             'message' => 'Data member berhasil ditambahkan',
             'data' => $data
         ]);
@@ -77,7 +78,10 @@ class MemberController extends Controller
         
         $member->save();
 
-        return response()->json(['message' => 'Data member berhasil diubah']);        
+        return response()->json([
+            'success' => true,
+            'message' => 'Data member berhasil diubah'
+        ]);        
     }
 
     public function delete($id)
@@ -91,7 +95,7 @@ class MemberController extends Controller
             ]);
         } else {
             return response()->json([
-                'success' => true,
+                'success' => false,
                 'message' => 'Data member gagal dihapus'
             ]);            
         }
