@@ -11,7 +11,6 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\DetilTransaksiController;
 
-
 Route::post('login', [UserController::class, 'login']);
 
 Route::group(['middleware' => ['jwt.verify:admin,kasir,owner']], function() {
@@ -48,7 +47,6 @@ Route::group(['middleware' => ['jwt.verify:admin']], function() {
 
 });
 
-
 //Route khusus admin & kasir
 Route::group(['middleware' => ['jwt.verify:admin,kasir']], function() {
     //MEMBER
@@ -62,7 +60,7 @@ Route::group(['middleware' => ['jwt.verify:admin,kasir']], function() {
     Route::post('transaksi', [TransaksiController::class, 'store']);
     Route::get('transaksi/{id}', [TransaksiController::class, 'getById']);
     Route::get('transaksi', [TransaksiController::class, 'getAll']);
-    Route::post('transaksi/{id}', [TransaksiController::class, 'update']);
+    Route::put('transaksi/{id}', [TransaksiController::class, 'update']);
 
     //DETAIL TRANSAKSI
     Route::post('transaksi/detil/tambah', [DetilTransaksiController::class, 'store']);

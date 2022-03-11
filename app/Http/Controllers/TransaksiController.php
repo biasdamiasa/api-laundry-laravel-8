@@ -40,7 +40,11 @@ class TransaksiController extends Controller
 
         $data = Transaksi::where('id', '=', $transaksi->id)->first();
 
-        return response()->json(['message' => 'Data transaksi berhasil ditambahkan', 'data' => $data]);
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+            'message' => 'Data transaksi berhasil ditambahkan', 
+        ]);
     }
 
     public function getAll()
@@ -52,25 +56,6 @@ class TransaksiController extends Controller
         return response()->json(['success' => true, 'data' => $data]);
     }
     
-    public function update($id, Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'id_member' => 'required'
-        ]);
-
-        if($validator->fails()) {
-            return response()->json($validator->errors());
-        }
-
-        $transaksi = Transaksi::where('id', '=', $id)->first();
-        
-        $transaksi->id_member = $request->id_member;
-
-        $transaksi->save();
-
-        return response()->json(['message' => 'Transaksi berhasil diubah']);
-    }
-
     public function getById($id)
     {
         $data = Transaksi::where('id', '=', $id)->first();  
