@@ -50,8 +50,8 @@ class TransaksiController extends Controller
     public function getAll()
     {
         $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')
-                    ->select('transaksi.*', 'member.nama')
-                    ->get();
+                                      ->select('transaksi.*', 'member.nama')
+                                      ->get();
                     
         return response()->json(['success' => true, 'data' => $data]);
     }
