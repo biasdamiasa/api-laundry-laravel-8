@@ -26,11 +26,14 @@ class UserController extends Controller
 
 		$user = JWTAuth::user();
 
+		$outlet = DB::table('outlet')->where('id', $user->id_outlet)->first();
+
         return response()->json([
             'success' => true,
             'message' => 'Login berhasil',
             'token' => $token,
-			'user' => $user
+			'user' => $user,
+			'outlet' => $outlet
         ]);
 	}
 
