@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Transaksi;
 use App\Models\DetilTransaksi;
+use App\Models\User;
 use Carbon\Carbon;
 use JWTAuth;
 
@@ -49,10 +50,15 @@ class TransaksiController extends Controller
 
     public function getAll()
     {
+        $id_user = $this->user->id;
+        $data_user = User::where('id', '=', $id_user)->first();        
+        
         $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')
-                                      ->select('transaksi.*', 'member.nama')
+                                      ->join('users', 'transaksi.id_user', 'users.id')
+                                      ->select('transaksi.id', 'member.nama', 'transaksi.tgl_order', 'transaksi.status' , 'users.name')
+                                      ->where('users.id_outlet', $data_user->id_outlet)
                                       ->get();
-                    
+        
         return response()->json(['success' => true, 'data' => $data]);
     }
     
@@ -112,12 +118,17 @@ class TransaksiController extends Controller
 
         $tahun = $request->tahun;
         $bulan = $request->bulan;
+
+        $id_user = $this->user->id;
+        $data_user = User::where('id', '=', $id_user)->first();
         
         $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')
-                    ->select('transaksi.id','transaksi.tgl_order','transaksi.tgl_bayar','transaksi.total_bayar', 'member.nama')
-                    ->whereYear('tgl_order', '=' , $tahun)
-                    ->whereMonth('tgl_order', '=', $bulan)
-                    ->get();
+                                      ->join('users', 'transaksi.id_user', '=', 'users.id')
+                                      ->select('transaksi.id', 'member.nama' , 'transaksi.tgl_order','transaksi.tgl_bayar','transaksi.total_bayar', 'users.name' )
+                                      ->where('users.id_outlet', $data_user->id_outlet)
+                                      ->whereYear('transaksi.tgl_order', '=' , $tahun)
+                                      ->whereMonth('transaksi.tgl_order', '=', $bulan)
+                                      ->get();
 
         return response()->json($data);
     }
